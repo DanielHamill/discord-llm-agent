@@ -1,0 +1,21 @@
+services:
+  fly-on-the-wall:
+    build: fly-on-the-wall/.
+    env_file:
+      - fly-on-the-wall/token.env
+    environment:
+      - MESSAGE_BROKER_HOST=rabbitmq
+      - EXCHANGE=fly_on_the_wall
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
