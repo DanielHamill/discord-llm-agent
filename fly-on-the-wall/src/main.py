@@ -2,9 +2,12 @@ import os
 import sys
 import logging
 
+import json
 import discord
 import pika
 from dotenv import load_dotenv
+
+from data import get_message_payload
 
 load_dotenv()
 
@@ -36,16 +39,12 @@ async def on_ready():
     logger.info(f'We have logged in as {discord_client.user}')
 
 
-def get_message_payload(message: discord.Message) -> str:
-    return ""
-
-
 @discord_client.event
 async def on_message(message):
     if message.author == discord_client.user:
         return
 
-    payload = get_message_payload(message)
+    payload = get_message_payload(message).model_dump_json()
     channel.basic_publish(exchange=EXCHANGE, routing_key='', body=payload)
     # connection.close()
     logger.info("Publishing message.")
