@@ -37,7 +37,7 @@ class Mention(BaseModel):
 class MessagePayload(BaseModel):
     message_id: int
     content: str
-    timestamp: str
+    created_at: str
     edited_at: Optional[str] = None
     author: Author
     channel: Channel
@@ -50,7 +50,7 @@ def get_message_payload(message: discord.Message) -> MessagePayload:
     payload = {
         "message_id": message.id,
         "content": message.content,
-        "timestamp": message.timestamp.isoformat(),
+        "created_at": message.created_at.isoformat(),
         "edited_at": message.edited_at.isoformat() if message.edited_at else None,
         "author": {
             "id": message.author.id,

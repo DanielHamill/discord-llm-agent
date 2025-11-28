@@ -21,10 +21,6 @@ intents.message_content = True
 discord_client = discord.Client(intents=intents)
 
 # establish message broker connection
-
-# connection = pika.SelectConnection(
-#     pika.ConnectionParameters(host=MESSAGE_BROKER_HOST)
-# )
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=MESSAGE_BROKER_HOST))
 channel = connection.channel()
