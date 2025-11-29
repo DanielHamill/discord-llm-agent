@@ -1,0 +1,33 @@
+# Message Broker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-broker
+  namespace: discord-llm-agent
+  labels:
+    app: message-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-broker
+  template:
+    metadata:
+      labels:
+        app: message-broker
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:4-management
+        ports:
+        - containerPort: 5672
+          name: default-port
+        - containerPort: 15672
+          name: management-port
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
