@@ -1,6 +1,7 @@
 services:
   fly-on-the-wall:
     build: fly-on-the-wall/.
+    image: danielhamill/fly-on-the-wall-bot:latest
     env_file:
       - fly-on-the-wall/token.env
     environment:

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-publisher
+  namespace: discord-llm-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-publisher
+  template:
+    metadata:
+      labels:
+        app: discord-publisher
+    spec:
+      containers:
+      - name: publisher
+        image: danielhamill/fly-on-the-wall-bot:latest
+        ports:
+        - containerPort: 8080 # I don't think this is needed
+        env:
+        - name: MESSAGE_BROKER_HOST
+          value: "message-broker-external.discord-llm-agent.svc.cluster.local"
+        - name: EXCHANGE
+          value: parking-deck-messages
+        - name: DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: parking-deck-secrets
+              key: DISCORD_TOKEN
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

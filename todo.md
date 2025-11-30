@@ -1,18 +1,54 @@
-from most important to least important
+to do: from most important to least important
 
-- more robust k8s distro
-    - k3s?
+- data ingestion
+    - ***important***: permanent data storage, sql for storing bulk data: postgres?
+    - ***less but still important***: script to scrape historical messages, store in database
+    - nosql db for operations requiring faster read/writes
+        - blacklisting? eg. if users don't want to be used for model training
+        - channel level configuration: eg. if an AI agent should only be used in certain channels
+- core features
+    - ***important***: inital prototype: AI agent that is basically just a chatgpt wrapper
+        - start with dreams channel?
+- tech debt
+    - ***important***: handle message publisher timeouts more gracefully.
+        - right now heartbeats/timeouts are disabled
+- more robust infrastructure
+    - better kubernetes distro (k3s?)
     - setup kubectl remotely
-- database
-    - sql for storing bulk data: postgres?
-    - nosql for blacklisting?
-- agents
-    - chatgpt wrapper agent for prototype
-- automate deployments
-    - automate build, tag, push, deploy
+    - buy rack server
+- automate/improve deployments
+    - automate build and deploy
+    - correctly tag image versions for deployments
+    - improve dockerfiles
+        - install dependencies before source code files so we can cache layers efficiently
+    - abstract deployments for multiple environments
+        - config maps/kustomize/helm?
     - init-container for discord bot, check rabbitmq readiness
-- linux machine security
-    - configure firewall properly
+- architecture improvements
+    - message publisher
+        - is it reconnecting/restarting when connection is lost?
+        - disconnect connection after certain idle time, reconnect on new messages
+    - message broker
+        - should we be using RabbitMQ? consider MQTT instead?
+        - improve provider/consumer clients
+- networking + security
+    - encrypt secrets at rest: discord bot token, anything else sensitive
+        - long(er) term: use a proper secret manager?
+    - improve cluster newtorking + best practices
+    - configure physical machine firewall properly
+    - make ports more configurable
 - testing framework/test automation
+    - tie into CI/CD
 - monitoring
     - dashboard with UI?
+
+
+more general things:
+- reliability
+    - how do we make the system <u>fault tolerant</u>
+- maintainability
+    - how do we plan for <u>changing requirements</u>
+- operability
+    - how do we <u>monitor operations<u> and <u>track metrics</u>
+- data
+    - what data models are we using/should we use and why?

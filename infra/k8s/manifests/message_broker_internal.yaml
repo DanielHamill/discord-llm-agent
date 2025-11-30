@@ -1,0 +1,14 @@
+# Internal Service for Message Broker (cluster communication)
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-broker-internal
+  namespace: discord-llm-agent
+spec:
+  type: ClusterIP
+  selector:
+    app: message-broker
+  ports:
+  - port: 5672
+    targetPort: 5672
+    name: broker-port

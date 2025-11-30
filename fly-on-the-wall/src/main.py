@@ -22,7 +22,10 @@ discord_client = discord.Client(intents=intents)
 
 # establish message broker connection
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=MESSAGE_BROKER_HOST))
+    pika.ConnectionParameters(
+        host=MESSAGE_BROKER_HOST,
+        heartbeat=0,
+    ))
 channel = connection.channel()
 channel.exchange_declare(exchange=EXCHANGE, exchange_type='fanout')
 
