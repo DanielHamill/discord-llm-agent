@@ -4,6 +4,8 @@ from pydantic import BaseModel
 import discord
 
 
+# TODO: refactor out data into a reusable library
+
 class Role(BaseModel):
     id: int
     name: str
@@ -55,10 +57,10 @@ def get_message_payload(message: discord.Message) -> MessagePayload:
         "author": {
             "id": message.author.id,
             "name": message.author.name,
-            "nick": message.author.nick,
+            "nick": None if isinstance(message.author, discord.User) else message.author.nick,
             "avatar_url": str(message.author.avatar.url) if message.author.avatar else None,
             "is_bot": message.author.bot,
-            "roles": [{"id": role.id, "name": role.name} for role in message.author.roles],
+            "roles": [] if isinstance(message.author, discord.User) else [{"id": role.id, "name": role.name} for role in message.author.roles],
         },
         "channel": {
             "id": message.channel.id,
