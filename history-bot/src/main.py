@@ -19,6 +19,8 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 EXPORTER_TYPE = os.getenv("EXPORTER_TYPE", "csv")
 CHANNEL_NAME = os.getenv("CHANNEL_NAME", "general")
 OUT_PATH = os.getenv("OUT_PATH", "./exported_messages.csv")
+_limit_env = os.getenv("MESSAGE_LIMIT")
+MESSAGE_LIMIT = int(_limit_env) if _limit_env is not None else None
 
 # establish discord connection
 intents = discord.Intents.default()
@@ -41,8 +43,14 @@ async def on_ready():
         channel_map[channel.name] = channel
 
     channel = channel_map[CHANNEL_NAME]
-    async for message in channel.history():
+    logger.info(f"Exporting messages from #{channel.name} (limit={MESSAGE_LIMIT})")
+    count = 0
+    async for message in channel.history(limit=MESSAGE_LIMIT):
         exporter.export_message(logger=logger, message=get_message_payload(message))
+        count += 1
+        if count % 100 == 0:
+            logger.info(f"Exported {count} messages so far...")
+    logger.info(f"Done. Exported {count} messages total.")
     exporter.close()
     await discord_client.close()
 
