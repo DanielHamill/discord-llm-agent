@@ -18,6 +18,6 @@ def benchmark(model, prompt, runs=3):
         })
     return times
 
-results = benchmark("qwen3.5:0.8b", "Explain recursion in one paragraph.")
+results = benchmark("qwen3:0.6b-q4_K_M", "Explain recursion in one paragraph.", runs=1)
 for i, r in enumerate(results):
     print(f"Run {i+1}: {r['tok_per_sec']} tok/s | {r['time_s']}s | {r['tokens']} tokens")
