@@ -6,6 +6,16 @@ import os
 from pathlib import Path
 import json
 from datetime import date, timedelta
+import dotenv
+
+dotenv.load_dotenv()
+
+USE_LAST_MONTH = os.environ.get("USE_LAST_MONTH", "")
+start_date = os.environ.get("START_DATE", "")
+end_date = os.environ.get("END_DATE", "")
+query = os.environ.get("QUERY", "")
+MESSAGES_SRC = os.environ.get("MESSAGES_SRC", "~/Data/discord-llm-data/exported_messages.csv")
+
 
 model_name = "BAAI/bge-base-en-v1.5"
 model_path = Path.home() / Path("models", model_name)
@@ -16,7 +26,7 @@ def load_data(csv_path: str = 'exported_messages.csv'):
     embeddings = np.array(df["embedding"].apply(json.loads).tolist())
     return df, embeddings
 
-df, message_embeddings = load_data("~/Data/discord-llm-data/exported_messages.csv")
+df, message_embeddings = load_data(MESSAGES_SRC)
 
 timestamp_col = "created_at" if "created_at" in df.columns else "timestamp"
 
@@ -24,9 +34,7 @@ timestamp_col = "created_at" if "created_at" in df.columns else "timestamp"
 #   USE_LAST_MONTH=true  → override START_DATE/END_DATE with last 30 days
 #   START_DATE=yyyy-mm-dd
 #   END_DATE=yyyy-mm-dd
-use_last_month = os.environ.get("USE_LAST_MONTH", "").lower() in ("1", "true", "yes")
-start_date = os.environ.get("START_DATE")  # e.g. "2024-01-01"
-end_date = os.environ.get("END_DATE")      # e.g. "2024-12-31"
+use_last_month = USE_LAST_MONTH.lower() in ("1", "true", "yes")
 
 if use_last_month:
     end_date = date.today().isoformat()
@@ -75,7 +83,6 @@ def format_conversation(conv: list[dict]) -> str:
     return "\n".join(lines)
 
 # Search using individual message embeddings
-query = "I'm planning on hosting/throwing an event, party or hangout if anyone want to hang out in the near future."
 query_embedding = model.encode([query])
 
 cos_scores = cosine_similarity(query_embedding, message_embeddings)[0]
