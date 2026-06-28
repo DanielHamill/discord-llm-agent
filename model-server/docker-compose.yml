@@ -1,0 +1,14 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - C:\Users\Daniel Hamill\.ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # Change to a specific number (e.g., 1) if desired
+              capabilities: [gpu]

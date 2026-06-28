@@ -1,0 +1,28 @@
+[project]
+name = "rag-service"
+version = "0.0.1"
+description = "RAG microservice exposing a chat endpoint"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.32.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.0.0",
+    "langchain>=0.3",
+    "langchain-ollama>=0.3",
+    "pinecone>=8.1.2",
+]
+
+[project.scripts]
+start = "main:start"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools]
+py-modules = ["main", "rag"]
