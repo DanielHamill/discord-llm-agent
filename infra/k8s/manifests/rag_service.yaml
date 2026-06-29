@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-service
+  namespace: discord-llm-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-service
+  template:
+    metadata:
+      labels:
+        app: rag-service
+    spec:
+      containers:
+      - name: rag-service
+        image: danielhamill/rag-service:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OLLAMA_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: OLLAMA_BASE_URL
+        - name: MODEL_NAME
+          value: "qwen3:4b-thinking-2507-q4_K_M"
+        - name: PINECONE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: parking-deck-secrets
+              key: PINECONE_API_KEY
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-service
+  namespace: discord-llm-agent
+spec:
+  type: NodePort
+  selector:
+    app: rag-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rag-service-config
+  namespace: discord-llm-agent
+data:
+  OLLAMA_BASE_URL: "http://136.55.181.222:11434"

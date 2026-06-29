@@ -11,4 +11,4 @@ services:
           devices:
             - driver: nvidia
               count: all # Change to a specific number (e.g., 1) if desired
-              capabilities: [gpu]
+              capabilities: [gpu] 
