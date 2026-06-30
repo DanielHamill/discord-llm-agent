@@ -14,6 +14,16 @@ Planned features:
 3. **Relational Database** - For long term storage
 4. **Custom agent** - Respond to querys in server, act as an API to backend, etc.
 
+## Deploying to Kubernetes
+
+Then apply everything:
+
+```sh
+kubectl apply -k infra/k8s/
+```
+
+This will create the namespace, ConfigMap (`rag-service-config`), Secret (`parking-deck-secrets`), and all service/deployment manifests.
+
 ## Project Structure
 
 ```
@@ -24,5 +34,6 @@ discord-llm-agent/
 │ └── subscriber/ # example script for subscribing to messages
 ├── infra/
 │ └── k8s/
+│   ├── kustomization.yaml # kustomize entry point
 │   └── manifests/ # kubernetes manifests for deployments
 ```

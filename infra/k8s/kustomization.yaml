@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: discord-llm-agent
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+  - manifests/namespace.yaml
+  - manifests/message_broker.yaml
+  - manifests/message_broker_internal.yaml
+  - manifests/message_broker_external.yaml
+  - manifests/discord_bot.yaml
+  - manifests/rag_service.yaml
+
+configMapGenerator:
+  - name: rag-service-config
+    envs:
+      - vars.env
+
+secretGenerator:
+  - name: parking-deck-secrets
+    envs:
+      - secrets.env
