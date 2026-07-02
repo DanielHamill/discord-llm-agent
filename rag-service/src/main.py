@@ -30,10 +30,13 @@ class ChatResponse(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     logger.info(f"Received prompt: {request.prompt}")
+    if not rag.is_model_server_available():
+        logger.error("Model server health check failed")
+        return ChatResponse(response=_model_unavailable_msg)
     try:
         response = rag.query(request.prompt)
-    except httpx.ConnectTimeout:
-        logger.error("Could not connect to model server")
+    except (httpx.ConnectError, httpx.TimeoutException):
+        logger.error("Lost connection to model server during query")
         return ChatResponse(response=_model_unavailable_msg)
     return ChatResponse(response=response)
 

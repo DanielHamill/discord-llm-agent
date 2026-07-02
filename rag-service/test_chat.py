@@ -4,6 +4,7 @@ import json
 payload = json.dumps({"prompt": "What beach trips have there been?"}).encode()
 
 req = urllib.request.Request(
+    # "http://192.168.86.42:30444/chat",
     "http://localhost:8000/chat",
     data=payload,
     headers={"Content-Type": "application/json"},

@@ -4,6 +4,7 @@ import logging
 import os
 import time
 
+import httpx
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.tools import tool
@@ -43,12 +44,25 @@ _system_prompt = (
 )
 
 _model_name = os.getenv("MODEL_NAME", "qwen3:4b-thinking-2507-q4_K_M")
+_ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 _agent = create_agent(
-    ChatOllama(model=_model_name, base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")),
+    ChatOllama(model=_model_name, base_url=_ollama_base_url),
     tools=[retrieve_context],
     system_prompt=_system_prompt,
 )
 logger.info("RAG agent initialized with model: %s", _model_name)
+
+_HEALTH_CHECK_TIMEOUT = float(os.getenv("MODEL_SERVER_HEALTH_TIMEOUT", "3"))
+
+
+def is_model_server_available() -> bool:
+    """Return True if the Ollama server is reachable, False otherwise."""
+    try:
+        with httpx.Client(timeout=_HEALTH_CHECK_TIMEOUT) as client:
+            response = client.get(f"{_ollama_base_url}/api/version")
+            return response.is_success
+    except (httpx.ConnectError, httpx.TimeoutException):
+        return False
 
 
 def query(prompt: str) -> str:

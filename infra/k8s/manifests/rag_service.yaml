@@ -25,7 +25,10 @@ spec:
               name: rag-service-config
               key: OLLAMA_BASE_URL
         - name: MODEL_NAME
-          value: "qwen3:4b-thinking-2507-q4_K_M"
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: MODEL_NAME
         - name: MODEL_SERVER_UNAVAILABLE_MSG
           valueFrom:
             configMapKeyRef:
