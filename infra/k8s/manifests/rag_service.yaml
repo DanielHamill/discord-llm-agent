@@ -60,12 +60,3 @@ spec:
     targetPort: 8000
     name: http
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rag-service-config
-  namespace: discord-llm-agent
-data:
-  OLLAMA_BASE_URL: "http://136.55.181.222:11434"
-  MODEL_SERVER_UNAVAILABLE_MSG: "The model server is currently unavailable. Please try again later."
