@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-payload = json.dumps({"prompt": "What camping trips have been discussed?"}).encode()
+payload = json.dumps({"prompt": "What beach trips have there been?"}).encode()
 
 req = urllib.request.Request(
     "http://localhost:8000/chat",

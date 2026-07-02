@@ -1,22 +1,46 @@
 services:
-  fly-on-the-wall:
-    build: fly-on-the-wall/.
-    image: danielhamill/fly-on-the-wall-bot:latest
-    env_file:
-      - fly-on-the-wall/token.env
-    environment:
-      - MESSAGE_BROKER_HOST=rabbitmq
-      - EXCHANGE=fly_on_the_wall
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-  rabbitmq:
-    image: rabbitmq:4-management
+  # fly-on-the-wall:
+  #   build: fly-on-the-wall/.
+  #   image: danielhamill/fly-on-the-wall-bot:latest
+  #   env_file:
+  #     - local.env
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+
+  # rabbitmq:
+  #   image: rabbitmq:4-management
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   healthcheck:
+  #     test: rabbitmq-diagnostics -q ping
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  rag-service:
+    build: rag-service/.
+    image: danielhamill/rag-service:latest
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "8000:8000"
+    env_file:
+      - local.env
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - C:\Users\Daniel Hamill\.ollama:/root/.ollama
+    environment:
+      - OLLAMA_FLASH_ATTENTION=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

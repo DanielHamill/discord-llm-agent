@@ -26,6 +26,11 @@ spec:
               key: OLLAMA_BASE_URL
         - name: MODEL_NAME
           value: "qwen3:4b-thinking-2507-q4_K_M"
+        - name: MODEL_SERVER_UNAVAILABLE_MSG
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: MODEL_SERVER_UNAVAILABLE_MSG
         - name: PINECONE_API_KEY
           valueFrom:
             secretKeyRef:
@@ -63,3 +68,4 @@ metadata:
   namespace: discord-llm-agent
 data:
   OLLAMA_BASE_URL: "http://136.55.181.222:11434"
+  MODEL_SERVER_UNAVAILABLE_MSG: "The model server is currently unavailable. Please try again later."

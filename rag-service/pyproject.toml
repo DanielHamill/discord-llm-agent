@@ -1,6 +1,6 @@
 [project]
 name = "rag-service"
-version = "0.0.1"
+version = "0.1.0"
 description = "RAG microservice exposing a chat endpoint"
 readme = "README.md"
 requires-python = ">=3.12"
