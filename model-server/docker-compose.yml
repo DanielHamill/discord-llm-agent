@@ -5,6 +5,10 @@ services:
       - "11434:11434"
     volumes:
       - C:\Users\Daniel Hamill\.ollama:/root/.ollama
+    # Required for nvidia-smi to set compute mode on the host GPU
+    privileged: true
+    entrypoint: >
+      sh -c "nvidia-smi -c 3 && ollama serve"
     deploy:
       resources:
         reservations:

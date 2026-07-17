@@ -27,7 +27,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: parking-deck-secrets
-              key: DISCORD_TOKEN
+              key: FOTW_DISCORD_TOKEN
         imagePullPolicy: Always
         resources:
           requests:

@@ -1,0 +1,73 @@
+name: Docker Publish (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      service_path:
+        required: true
+        type: string
+        description: "Path to the service directory (e.g. rag-service)"
+      image_name:
+        required: true
+        type: string
+        description: "Docker Hub image name (e.g. danielhamill/rag-service)"
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check version bumped
+        id: version_check
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          PREV=$(git show HEAD~1:${{ inputs.service_path }}/pyproject.toml 2>/dev/null | grep '^version = ' | cut -d'"' -f2 || echo "none")
+          CURR=$(grep '^version = ' ${{ inputs.service_path }}/pyproject.toml | cut -d'"' -f2)
+          if [ "$PREV" = "$CURR" ]; then
+            echo "Version unchanged ($CURR), skipping build."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version changed: $PREV -> $CURR"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract version from pyproject.toml
+        id: version
+        if: github.event_name == 'workflow_dispatch' || steps.version_check.outputs.changed == 'true'
+        run: |
+          VERSION=$(grep '^version = ' ${{ inputs.service_path }}/pyproject.toml | cut -d'"' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        if: github.event_name == 'workflow_dispatch' || steps.version_check.outputs.changed == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'workflow_dispatch' || steps.version_check.outputs.changed == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        if: github.event_name == 'workflow_dispatch' || steps.version_check.outputs.changed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.service_path }}/
+          file: ${{ inputs.service_path }}/dockerfile
+          push: true
+          tags: |
+            ${{ inputs.image_name }}:${{ steps.version.outputs.version }}
+            ${{ inputs.image_name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
