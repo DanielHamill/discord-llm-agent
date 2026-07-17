@@ -25,10 +25,11 @@ spec:
       labels:
         app: model-server
     spec:
+      runtimeClassName: nvidia
       containers:
       - name: ollama
         image: ollama/ollama
-        command: ["sh", "-c", "nvidia-smi -c 3 && ollama serve"]
+        command: ["ollama", "serve"]
         ports:
         - containerPort: 11434
         securityContext:
