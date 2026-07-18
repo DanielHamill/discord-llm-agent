@@ -1,0 +1,13 @@
+[project]
+name = "gamer-bot"
+version = "0.1.0"
+description = "Discord bot that maintains a live status message in a channel"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "discord>=2.3.2",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+gamer-bot = "main:main"
