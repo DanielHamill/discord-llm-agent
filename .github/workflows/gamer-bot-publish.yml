@@ -1,0 +1,19 @@
+name: Publish gamer-bot
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "gamer-bot/**"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      service_path: gamer-bot
+      image_name: danielhamill/gamer-bot
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

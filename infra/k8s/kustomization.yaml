@@ -14,6 +14,7 @@ resources:
   # - manifests/discord_bot.yaml
   - manifests/rag_service.yaml
   - manifests/model_server.yaml
+  - manifests/gamer_bot.yaml
 
 configMapGenerator:
   - name: rag-service-config

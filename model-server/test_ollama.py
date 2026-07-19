@@ -1,7 +1,7 @@
 import time
 import requests
 
-HOST = "http://136.55.181.222:11434"
+HOST = "http://192.168.86.42:31434"
 
 
 def list_models() -> list[str]:
@@ -28,8 +28,8 @@ def prompt_model(model: str, prompt: str, timer: bool = False) -> str:
 
 if __name__ == "__main__":
     models = list_models()
-    if "qwen3.5:0.8b" in models:
-        reply = prompt_model("qwen3.5:0.8b", "Say hello in one sentence.", timer=True)
+    if "qwen3.5:4b" in models:
+        reply = prompt_model("qwen3.5:4b", "Say hello in one sentence.", timer=True)
         print(reply)
     else:
-        print("Model qwen3.5:0.8b not found in available models.")
+        print("Model qwen3.5:4b not found in available models.")

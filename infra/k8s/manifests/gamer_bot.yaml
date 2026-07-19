@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gamer-bot
+  namespace: discord-llm-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gamer-bot
+  template:
+    metadata:
+      labels:
+        app: gamer-bot
+    spec:
+      containers:
+      - name: gamer-bot
+        image: danielhamill/gamer-bot:latest
+        env:
+        - name: DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: parking-deck-secrets
+              key: GAMER_BOT_DISCORD_TOKEN
+        - name: OUTPUT_CHANNEL
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: GAMER_BOT_OUTPUT_CHANNEL
+        - name: INPUT_CHANNEL
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: GAMER_BOT_INPUT_CHANNEL
+        - name: OLLAMA_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: OLLAMA_BASE_URL
+        - name: MODEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: rag-service-config
+              key: MODEL_NAME
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
