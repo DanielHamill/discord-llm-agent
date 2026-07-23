@@ -11,7 +11,7 @@ resources:
   # - manifests/message_broker.yaml
   # - manifests/message_broker_internal.yaml
   # - manifests/message_broker_external.yaml
-  # - manifests/discord_bot.yaml
+  - manifests/discord_bot.yaml 
   - manifests/rag_service.yaml
   - manifests/model_server.yaml
   - manifests/gamer_bot.yaml
